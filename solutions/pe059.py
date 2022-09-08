@@ -19,11 +19,53 @@ a file containing the encrypted ASCII codes, and the knowledge that the plain te
 decrypt the message and find the sum of the ASCII values in the original text.</p>
 """
 
+from itertools import permutations
+from string import ascii_lowercase
 
-# Testing I/O
+# ASCII value of lowercase alphabet range from 97 to 122
 
-with open('p059_cipher.txt', 'r') as file:
-    data = file.readline().split(',')
+# -----------------------------------------------------------------
+## Method
+##### Find the 3 most frequently used characters
+##### These are likely to be either spaces or e,t,a,i,n,o,s,...
 
-    for number in data:
-        print(number)
+##### c: ciphertext character
+##### m: message character
+##### p: password character
+##### c ^ p must be between 97 and 122 inclusive
+
+#####  Calculate each of the top 3
+#####  Find characters that result in spaces when xored
+#####  Test each of the 6 permutations
+#####  Use password that results in readable text
+
+# -----------------------------------------------------------------
+with open("data/p059_cipher.txt", "r") as file:
+    data = [int(c) for c in file.readline().split(",")]
+
+ciphertext = [chr(n) for n in data]
+
+# frequency_counter = dict()
+# for n in data:
+#     if n in frequency_counter.keys():
+#         frequency_counter[n] += 1
+#     else:
+#         frequency_counter[n] = 1
+
+# top_freqs = sorted(frequency_counter.items(), key=lambda x: x[1], reverse=True)[:3]
+# print(top_freqs)
+# for f in top_freqs:
+#     for c in ascii_lowercase:
+#         print(c, chr(ord(c) ^ f[0])) # find one(s) that results in a common english character
+
+
+for password in permutations("pex"):
+
+    pass_dict = {i: password[i] for i in range(3)}
+    message = [chr(n ^ ord(pass_dict[i % 3])) for i, n in enumerate(data)]
+    print(password, "".join(message), end="\n" + "-" * 40 + "\n")
+
+
+## Password is "exp"
+# Calculate sum of ascii characters
+print(sum([n ^ ord({0: "e", 1: "x", 2: "p"}[i % 3]) for i, n in enumerate(data)]))
